@@ -1,0 +1,27 @@
+{
+  "author": "Alex Potsides",
+  "name": "mongoose-crate",
+  "description": "Attach files to MongoDB models via Mongoose.js",
+  "keywords": ["mongoose", "s3", "imagemagick", "uploads", "attachments", "files"],
+  "version": "0.0.1",
+  "homepage": "https://github.com/achingbrain/mongoose-crate",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/achingbrain/mongoose-crate.git"
+  },
+  "main": "index.js",
+  "scripts": {
+  "test": "istanbul cover ./node_modules/mocha/bin/_mocha"
+  },
+  "dependencies": {
+    "async": "^0.2",
+    "imagemagick": "^0.1"
+  },
+  "devDependencies": {
+    "mocha": "^1.18",
+    "should": "^3.2",
+    "mongoose": "^3.8",
+    "istanbul": "^0.2",
+    "sinon": "^1.9"
+  }
+}
