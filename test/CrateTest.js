@@ -34,4 +34,39 @@ describe("Crate", function() {
 			done();
 		});
 	})
+
+	it("should error on non attachment field", function(done) {
+		var file = path.resolve(__dirname + "/./fixtures/node_js_logo.png");
+
+		var model = new StubSchema();
+		model.attach("foo", {
+			path: file
+		}, function(error) {
+			error.should.be.ok;
+
+			done();
+		});
+	})
+
+	it("should error when attachment path is missing", function(done) {
+		var model = new StubSchema();
+		model.attach("file", {}, function(error) {
+			error.should.be.ok;
+
+			done();
+		});
+	})
+
+	it("should error on non-existent file", function(done) {
+		var file = path.resolve(__dirname + "/./fixtures/foo.png");
+
+		var model = new StubSchema();
+		model.attach("file", {
+			path: file
+		}, function(error) {
+			error.should.be.ok;
+
+			done();
+		});
+	})
 })

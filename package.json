@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "async": "^0.2",
-    "imagemagick": "^0.1"
+    "imagemagick": "^0.1",
+    "mmmagic": "^0.3"
   },
   "devDependencies": {
     "mocha": "^1.18",
