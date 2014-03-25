@@ -1,24 +1,37 @@
 var should = require("should"),
+	path = require("path"),
 	Crate = require("../lib/Crate"),
-	StubStorageProvider = require("./fixtures/StubStorageProvider");
+	StubSchema = require("./fixtures/StubSchema"),
+	StubSchemaWithArrayProperty = require("./fixtures/StubSchemaWithArrayProperty");
 
 describe("Crate", function() {
 
-	it("should register and retrieve a StorageProvider", function(done) {
-		var providerName = "foo";
-		var provider = new StubStorageProvider();
+	it("should attach a file", function(done) {
+		var file = path.resolve(__dirname + "/./fixtures/node_js_logo.png");
 
-		var crate = new Crate();
-		crate.registerStorageProvider(providerName, provider);
-		crate.findStorageProvider(providerName).should.equal(provider);
+		var model = new StubSchema();
+		model.attach("file", {
+			path: file
+		}, function(error) {
+			should(error).not.ok;
 
-		done();
+			done();
+		});
 	})
 
-	it("should object strenuously to non-existent StorageProvider", function(done) {
-		var crate = new Crate();
-		crate.findStorageProvider.bind(crate, "foo").should.throw();
+	it("should attach a file to an array", function(done) {
+		var file = path.resolve(__dirname + "/./fixtures/node_js_logo.png");
+		var model = new StubSchemaWithArrayProperty();
 
-		done();
+		model.files.length.should.equal(0);
+		model.attach("files", {
+			path: file
+		}, function(error) {
+			should(error).not.ok;
+
+			model.files.length.should.equal(1);
+
+			done();
+		});
 	})
 })
