@@ -85,7 +85,7 @@ post.attach("attachments", {path: "/path/to/file"}, function(error) {
 ```
 ### Images
 
-See mongoose-crate-imagemagick.
+See [mongoose-crate-imagemagick](https://github.com/achingbrain/mongoose-crate-imagemagick).
 
 #### Using with Express.js uploads
 
@@ -131,6 +131,9 @@ Example:
 {
   "name" : "dragon.png",
   "size" : 26887,
+  "mimeType": "image/png",
   "url" : "http://my_bucket.s3.amazonaws.com/folder/4fbaaa31db8cec0923000019-medium.png"
 }
 ```
+
+Plugins can add extra meta data.  E.g. [mongoose-crate-imagemagick](https://github.com/achingbrain/mongoose-crate-imagemagick) adds width, height, etc.
