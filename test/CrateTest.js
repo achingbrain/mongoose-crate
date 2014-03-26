@@ -2,7 +2,6 @@ var should = require("should"),
 	path = require("path"),
 	os = require("os"),
 	fs = require("fs"),
-	sinon = require("sinon"),
 	tungus = require("tungus"),
 	mongoose = require("mongoose"),
 	async = require("async"),
@@ -143,7 +142,7 @@ describe("Crate", function() {
 			});
 		});
 	})
-/*
+
 	it("should remove attachment when model is updated", function(done) {
 		var file = path.resolve(__dirname + "/./fixtures/node_js_logo.png");
 
@@ -156,6 +155,9 @@ describe("Crate", function() {
 					path: file
 				}, callback);
 			}, function(callback) {
+				// file url should have been populated
+				model.file.url.should.be.ok;
+
 				// save the model
 				model.save(callback);
 			}, function(callback) {
@@ -169,6 +171,9 @@ describe("Crate", function() {
 					// but the ids should be the same
 					model.id.should.equal(result.id);
 					model = result;
+
+					// should have persisted the file url in the previous step
+					model.file.url.should.be.ok;
 
 					callback(error);
 				});
@@ -194,5 +199,89 @@ describe("Crate", function() {
 				done();
 			});
 		});
-	});*/
+	});
+
+	it("should remove attachment from array field when model is updated", function(done) {
+		var file = path.resolve(__dirname + "/./fixtures/node_js_logo.png");
+
+		createSchemaWithArrayProperty(function(StubSchema, storage) {
+			var model = new StubSchema();
+			var tasks = [function(callback) {
+				// create our model and attach a file
+				model.name = "hello";
+				model.attach("files", {
+					path: file
+				}, callback);
+			}, function(callback) {
+				// create our model and attach another file
+				model.name = "hello";
+				model.attach("files", {
+					path: file
+				}, callback);
+			}, function(callback) {
+				// file urls should have been populated
+				model.files.length.should.equal(2);
+				model.files[0].url.should.be.ok;
+				model.files[1].url.should.be.ok;
+
+				// save the model
+				model.save(callback);
+			}, function(callback) {
+				// load a new copy of the model
+				model.id.should.be.ok;
+
+				StubSchema.findById(model.id, function(error, result) {
+					// should not be the same object
+					(model === result).should.be.false;
+
+					// but the ids should be the same
+					model.id.should.equal(result.id);
+					model = result;
+
+					// should have persisted the file url in the previous step
+					model.files.length.should.equal(2);
+					model.files[0].url.should.be.ok;
+					model.files[1].url.should.be.ok;
+
+					callback(error);
+				});
+			}, function(callback) {
+				// remove one of the files
+				model.files.shift();
+
+				// and save the model again
+				model.save(callback);
+			}, function(callback) {
+				// load a new copy of the model
+				model.id.should.be.ok;
+
+				StubSchema.findById(model.id, function(error, result) {
+					// should not be the same object
+					(model === result).should.be.false;
+
+					// but the ids should be the same
+					model.id.should.equal(result.id);
+					model = result;
+
+					// should only have one file now
+					model.files.length.should.equal(1);
+					model.files[0].url.should.be.ok;
+
+					callback(error);
+				});
+			}];
+
+			async.series(tasks, function(error) {
+				should(error).not.ok;
+
+				// should have saved two attachments
+				storage.save.callCount.should.equal(2);
+
+				// but removed one of them
+				storage.remove.callCount.should.equal(1);
+
+				done();
+			});
+		});
+	});
 })
