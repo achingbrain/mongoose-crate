@@ -11,7 +11,7 @@ StubStorageProvider.prototype.save = function(path, callback) {
 };
 
 StubStorageProvider.prototype.remove = function(attachment, callback) {
-	throw new Error("StorageProvider#remove not implemented");
+	callback();
 };
 
 module.exports = StubStorageProvider;

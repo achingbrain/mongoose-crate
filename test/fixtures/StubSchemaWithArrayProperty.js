@@ -1,21 +1,36 @@
 var mongoose = require("mongoose"),
 	crate = require("../../index"),
-	StorageProvider = require("./StubStorageProvider");
+	sinon = require("sinon"),
+	randomString = require("./randomString");
 
-var StubSchemaWithArrayProperty = new mongoose.Schema({
-	name: {
-		type: String,
-		required: true
-	}
-});
+module.exports = function(callback) {
+	var storage = {
+		save: sinon.stub(),
+		remove: sinon.stub()
+	};
 
-StubSchemaWithArrayProperty.plugin(crate, {
-	storage: new StorageProvider(),
-	fields: {
-		files: {
-			array: true
+	// happy path
+	storage.save.callsArgWith(1, undefined, randomString(10));
+	storage.remove.callsArg(1);
+
+	var StubSchema = new mongoose.Schema({
+		name: {
+			type: String,
+			required: true
 		}
-	}
-});
+	});
 
-module.exports = mongoose.model("StubSchemaWithArrayProperty", StubSchemaWithArrayProperty);
+	StubSchema.plugin(crate, {
+		storage: storage,
+		fields: {
+			files: {
+				array: true
+			}
+		}
+	});
+
+	var model = mongoose.model(randomString(10), StubSchema);
+
+	callback(model, storage);
+}
+
