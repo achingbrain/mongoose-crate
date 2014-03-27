@@ -280,6 +280,9 @@ describe("Crate", function() {
 				// but removed one of them
 				storage.remove.callCount.should.equal(1);
 
+				// so we should only have one file
+				model.files.length.should.equal(1);
+
 				done();
 			});
 		});
