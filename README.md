@@ -4,7 +4,11 @@
 
 mongoose-crate is a plugin for [Mongoose](http://mongoosejs.com/) that makes handling files a doddle.
 
-It's nominally based on [mongoose-attachments](https://github.com/heapsource/mongoose-attachments) but without the absentee landlord.
+File meta data is stored in MongoDB, whereas the actual file itself is stored using a StorageProvider.  Currently supported options for this are the [local filesystem](https://github.com/achingbrain/mongoose-crate-localfs), [Amazon S3](https://github.com/achingbrain/mongoose-crate-s3) and [Google Cloud Storage](https://github.com/achingbrain/mongoose-crate-gcs).  For others pull requests are gratefully accepted.
+
+Uploaded images can optionally be passed through [ImageMagick](https://github.com/achingbrain/mongoose-crate-imagemagick) to generate one or more images (e.g. thumbnails, full size, original image, etc) before saving.
+
+The architecture is nominally based on [mongoose-attachments](https://github.com/heapsource/mongoose-attachments) but without the absentee landlord.
 
 ## Usage
 
@@ -137,3 +141,9 @@ Example:
 ```
 
 Plugins can add extra meta data.  E.g. [mongoose-crate-imagemagick](https://github.com/achingbrain/mongoose-crate-imagemagick) adds width, height, etc.
+
+## Deletes and updates
+
+If you delete a model, any attached files will be removed along with it.  Similarly, if you attach a file to a field that already has an attachment, the old file will be deleted before the new one is added.
+
+For attachment arrays, when the model is saved, any attachments that are no longer in the array will have their files removed.
