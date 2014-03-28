@@ -30,6 +30,13 @@ describe("Crate", function() {
 			}, function (error) {
 				should(error).not.ok;
 
+				model.file.type.should.equal("image/png");
+				model.file.name.should.equal("node_js_logo.png");
+				model.file.url.should.be.ok;
+
+				// this can vary depending on file system...
+				model.file.size.should.be.greaterThan(17000);
+
 				done();
 			});
 		});

@@ -135,7 +135,7 @@ Example:
 {
   "name" : "dragon.png",
   "size" : 26887,
-  "mimeType": "image/png",
+  "type": "image/png",
   "url" : "http://my_bucket.s3.amazonaws.com/folder/4fbaaa31db8cec0923000019-medium.png"
 }
 ```
