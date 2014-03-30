@@ -3,7 +3,7 @@
   "name": "mongoose-crate",
   "description": "Attach files to MongoDB models via Mongoose.js",
   "keywords": ["mongoose", "s3", "imagemagick", "uploads", "attachments", "files"],
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/achingbrain/mongoose-crate",
   "repository": {
     "type": "git",
