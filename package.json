@@ -15,7 +15,7 @@
     "coveralls": "istanbul cover _mocha && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
-    "async": "^0.2",
+    "async": "^0.4",
     "mmmagic": "^0.3",
     "check-types": "^1.2"
   },
