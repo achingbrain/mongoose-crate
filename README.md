@@ -2,13 +2,13 @@
 
 [![Dependency Status](https://david-dm.org/achingbrain/mongoose-crate.svg?theme=shields.io)](https://david-dm.org/achingbrain/mongoose-crate) [![devDependency Status](https://david-dm.org/achingbrain/mongoose-crate/dev-status.svg?theme=shields.io)](https://david-dm.org/achingbrainmongoose-crate#info=devDependencies) [![Build Status](https://img.shields.io/travis/achingbrain/mongoose-crate/master.svg)](https://travis-ci.org/achingbrain/mongoose-crate) [![Coverage Status](http://img.shields.io/coveralls/achingbrain/mongoose-crate/master.svg)](https://coveralls.io/r/achingbrain/mongoose-crate)
 
-mongoose-crate is a plugin for [Mongoose](http://mongoosejs.com/) that makes handling files a doddle.
+mongoose-crate is a plugin for [Mongoose](http://mongoosejs.com/) for attaching files to documents.
 
-File meta data is stored in MongoDB, whereas the actual file itself is stored using a StorageProvider.  Currently supported options for this are the [local filesystem](https://github.com/achingbrain/mongoose-crate-localfs), [Amazon S3](https://github.com/achingbrain/mongoose-crate-s3) and [Google Cloud Storage](https://github.com/achingbrain/mongoose-crate-gcs).  For others pull requests are gratefully accepted.
+File meta data is stored in MongoDB, whereas the actual file itself is stored on the [local filesystem](https://github.com/achingbrain/mongoose-crate-localfs), [Amazon S3](https://github.com/achingbrain/mongoose-crate-s3) or [Google Cloud Storage](https://github.com/achingbrain/mongoose-crate-gcs).  For others pull requests are gratefully accepted.
 
 Uploaded images can optionally be passed through [ImageMagick](https://github.com/achingbrain/mongoose-crate-imagemagick) to generate one or more images (e.g. thumbnails, full size, original image, etc) before saving.
 
-The architecture is nominally based on [mongoose-attachments](https://github.com/heapsource/mongoose-attachments) but without the absentee landlord.
+The architecture is nominally based on [mongoose-attachments](https://github.com/heapsource/mongoose-attachments) but that project hasn't seen updates in a while.
 
 ## Usage
 
