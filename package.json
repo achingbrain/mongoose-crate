@@ -15,15 +15,15 @@
     "coveralls": "istanbul cover _mocha && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
-    "async": "^0.7",
+    "async": "^0.9",
     "mmmagic": "^0.3",
     "check-types": "^1.2"
   },
   "devDependencies": {
     "mocha": "^1.18",
-    "should": "^3.2",
+    "should": "^4.0",
     "mongoose": "^3.8",
-    "istanbul": "^0.2",
+    "istanbul": "^0.3",
     "sinon": "^1.9",
     "coveralls": "^2.8",
     "tingodb": "^0.2",
