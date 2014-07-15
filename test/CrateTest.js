@@ -19,7 +19,7 @@ describe('Crate', function() {
 
     done()
   })
-
+/*
   it('should attach a file', function(done) {
     var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
 
@@ -359,6 +359,31 @@ describe('Crate', function() {
 
         // and also removed one of them
         storage.remove.callCount.should.equal(1)
+
+        done()
+      })
+    })
+  })
+*/
+  it('should have an attach method', function(done) {
+
+    createSchema(function(StubSchema, storage) {
+      var model = new StubSchema()
+      var tasks = [function(callback) {
+        // create our model and attach a file
+        model.name = 'hello'
+        model.save(callback)
+      }, function(callback) {
+
+        StubSchema.findById(model.id).exec(function(error, result) {
+          should(result.attach).not.be.null
+
+          callback()
+        })
+      }]
+
+      async.series(tasks, function(error) {
+        should(error).not.ok
 
         done()
       })
