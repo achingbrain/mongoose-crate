@@ -19,7 +19,7 @@ describe('Crate', function() {
 
     done()
   })
-/*
+
   it('should attach a file', function(done) {
     var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
 
@@ -364,7 +364,7 @@ describe('Crate', function() {
       })
     })
   })
-*/
+
   it('should have an attach method', function(done) {
 
     createSchema(function(StubSchema, storage) {
