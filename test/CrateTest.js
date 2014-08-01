@@ -1,4 +1,5 @@
 var should = require('should'),
+  sinon = require('sinon'),
   path = require('path'),
   os = require('os'),
   fs = require('fs'),
@@ -8,7 +9,8 @@ var should = require('should'),
   randomString = require('./fixtures/randomString'),
   Crate = require('../lib/Crate'),
   createSchema = require('./fixtures/StubSchema'),
-  createSchemaWithArrayProperty = require('./fixtures/StubSchemaWithArrayProperty')
+  createSchemaWithArrayProperty = require('./fixtures/StubSchemaWithArrayProperty'),
+  createSchemaWithFileProcessor = require('./fixtures/StubSchemaWithFileProcessor')
 
 describe('Crate', function() {
 
@@ -359,6 +361,105 @@ describe('Crate', function() {
 
         // and also removed one of them
         storage.remove.callCount.should.equal(1)
+
+        done()
+      })
+    })
+  })
+
+  it('should remove attachment when attachment is deleted from model with file processor and multiple transforms', function(done) {
+    var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
+
+    var fileProcessor = {
+      createFieldSchema: sinon.stub(),
+      willOverwrite: sinon.stub(),
+      shouldRemove: sinon.stub(),
+      remove: sinon.stub()
+    }
+    fileProcessor.createFieldSchema.returns({
+      foo: {},
+      bar: {}
+    })
+    fileProcessor.process = function(attachment, storageProvider, model, callback) {
+      storageProvider.save(attachment, function(error, url) {
+        ['foo', 'bar'].forEach(function(property) {
+          model[property] = {
+            size: attachment.size,
+            name: attachment.name,
+            type: attachment.type,
+            url: url
+          }
+        })
+
+        callback(error)
+      })
+    }
+    fileProcessor.shouldRemove.returns(true)
+    fileProcessor.remove.callsArg(2)
+
+    createSchemaWithFileProcessor(fileProcessor, function(StubSchema, storage) {
+      var model = new StubSchema()
+      var tasks = [function(callback) {
+        // create our model and attach a file
+        model.name = 'hello'
+        model.attach('file', {
+          path: file
+        }, callback)
+      }, function(callback) {
+        // file urls should have been populated
+        model.file.foo.should.be.ok
+        model.file.bar.should.be.ok
+
+        // save the model
+        model.save(callback)
+      }, function(callback) {
+        // load a new copy of the model
+        model.id.should.be.ok
+
+        StubSchema.findById(model.id, function(error, result) {
+          // should not be the same object
+          (model === result).should.be.false
+
+          // but the ids should be the same
+          model.id.should.equal(result.id)
+          model = result
+
+          callback(error)
+        })
+      }, function(callback) {
+        // remove the files
+        model.file = null
+
+        // and save the model again
+        model.save(callback)
+      }, function(callback) {
+        // load a new copy of the model
+        model.id.should.be.ok
+
+        StubSchema.findById(model.id, function(error, result) {
+          // should not be the same object
+          (model === result).should.be.false
+
+          // but the ids should be the same
+          model.id.should.equal(result.id)
+          model = result
+
+          // should have removed field
+          should(model.file.foo).not.ok
+          should(model.file.bar).not.ok
+
+          callback(error)
+        })
+      }]
+
+      async.series(tasks, function(error) {
+        should(error).not.ok
+
+        // should have saved two attachments
+        storage.save.callCount.should.equal(1)
+
+        // and also removed one of them
+        fileProcessor.remove.callCount.should.equal(1)
 
         done()
       })
