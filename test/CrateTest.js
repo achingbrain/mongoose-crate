@@ -125,6 +125,43 @@ describe('Crate', function() {
     })
   })
 
+  it('should remove attachment when model is loaded and deleted', function(done) {
+    var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
+
+    createSchema(function(StubSchema, storage) {
+      var model = new StubSchema()
+      model.name = 'foo'
+      model.attach('file', {
+        path: file
+      }, function(error) {
+        should(error).not.ok
+
+        // save the model
+        model.save(function(error) {
+          should(error).not.ok
+
+          // load a new copy of the model
+          StubSchema.findById(model.id, function(error, result) {
+            // should not be the same object
+            (model === result).should.be.false
+
+            // but the ids should be the same
+            model.id.should.equal(result.id)
+            model = result
+
+            storage.remove.callCount.should.equal(0)
+
+            model.remove()
+
+            storage.remove.callCount.should.equal(1)
+
+            done()
+          })
+        })
+      })
+    })
+  })
+
   it('should remove attachment array when model is deleted', function(done) {
     var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
 
