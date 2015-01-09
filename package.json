@@ -10,7 +10,7 @@
     "attachments",
     "files"
   ],
-  "version": "1.0.8",
+  "version": "1.0.9",
   "homepage": "https://github.com/achingbrain/mongoose-crate",
   "repository": {
     "type": "git",
