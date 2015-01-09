@@ -146,9 +146,33 @@ Plugins can add extra meta data.  E.g. [mongoose-crate-imagemagick](https://gith
 
 ## Deletes and updates
 
-If you delete a model, any attached files will be removed along with it.  Similarly, if you attach a file to a field that already has an attachment, the old file will be deleted before the new one is added.
+If you delete a model, any attached files will be removed along with it (with one caveat, see Schema methods vs Queries below).  Similarly, if you attach a file to a field that already has an attachment, the old file will be deleted before the new one is added.
 
 For attachment arrays, when the model is saved, any attachments that are no longer in the array will have their files removed.
+
+### Schema methods vs Queries
+
+Removal of files happens via middleware - if you use `findById`, `findOne` or anything else that returns a [Query](http://mongoosejs.com/docs/queries.html) and call methods on that query, middleware is not executed. See the [Mongoose middleware docs](http://mongoosejs.com/docs/middleware.html#notes) for more.
+
+In short, do this sort of thing:
+
+```javascript
+MySchema.remove({...}, callback)
+```
+
+or this:
+
+```javascript
+MySchema.findOne({...}, function(err, doc) {
+  doc.remove(callback)
+})
+```
+
+..but not this:
+
+```javascript
+MySchema.findOne({...}).remove(callback)
+```
 
 ### Array attachment deletion
 
