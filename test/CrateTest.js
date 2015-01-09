@@ -10,7 +10,8 @@ var should = require('should'),
   Crate = require('../lib/Crate'),
   createSchema = require('./fixtures/StubSchema'),
   createSchemaWithArrayProperty = require('./fixtures/StubSchemaWithArrayProperty'),
-  createSchemaWithFileProcessor = require('./fixtures/StubSchemaWithFileProcessor')
+  createSchemaWithFileProcessor = require('./fixtures/StubSchemaWithFileProcessor'),
+  createSchemaWithUnselectedName = require('./fixtures/StubSchemaWithUnselectedName')
 
 describe('Crate', function() {
 
@@ -729,6 +730,49 @@ describe('Crate', function() {
         // remove the file
         model.file.url = null
         model.remove(callback)
+      }]
+
+      async.series(tasks, function(error) {
+        should(error).not.ok
+
+        // should have saved two attachments
+        storage.save.callCount.should.equal(1)
+
+        // and also removed one of them
+        storage.remove.callCount.should.equal(0)
+
+        done()
+      })
+    })
+  })
+
+  it('should survive a non-selected name property', function(done) {
+    var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
+
+    createSchemaWithUnselectedName(function(StubSchema, storage) {
+      var model = new StubSchema()
+      var tasks = [function(callback) {
+        // create our model and attach a file
+        model.name = 'hello'
+        model.attach('files', {
+          path: file
+        }, callback)
+      }, function(callback) {
+        // file urls should have been populated
+        model.files[0].url.should.be.ok
+
+        // save the model
+        model.save(callback)
+      }, function(callback) {
+        // load a new copy of the model
+        model.id.should.be.ok
+
+        StubSchema.findOne({
+          _id: model.id
+        }).select('name')
+          .exec(function(error, doc) {
+            doc.save(callback)
+          })
       }]
 
       async.series(tasks, function(error) {
