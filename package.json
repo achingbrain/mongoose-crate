@@ -31,6 +31,7 @@
     "istanbul": "^0.3",
     "mocha": "^2.1",
     "mongoose": "^3.8",
+    "pre-commit": "^0.0",
     "should": "^4.0",
     "sinon": "^1.9",
     "tingodb": "^0.3",
