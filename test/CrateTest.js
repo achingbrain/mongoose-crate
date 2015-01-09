@@ -693,4 +693,55 @@ describe('Crate', function() {
       })
     })
   })
+
+  it('should not block if url field is blank', function(done) {
+    var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
+
+    createSchema(function(StubSchema, storage) {
+      var model = new StubSchema()
+      var tasks = [function(callback) {
+        // create our model and attach a file
+        model.name = 'hello'
+        model.attach('file', {
+          path: file
+        }, callback)
+      }, function(callback) {
+        // file urls should have been populated
+        model.file.url.should.be.ok
+
+        // save the model
+        model.save(callback)
+      }, function(callback) {
+        // load a new copy of the model
+        model.id.should.be.ok
+
+        StubSchema.findById(model.id, function(error, result) {
+          // should not be the same object
+          (model === result).should.be.false
+
+          // but the ids should be the same
+          model.id.should.equal(result.id)
+          model = result
+
+          callback(error)
+        })
+      }, function(callback) {
+        // remove the file
+        model.file.url = null
+        model.remove(callback)
+      }]
+
+      async.series(tasks, function(error) {
+        should(error).not.ok
+
+        // should have saved two attachments
+        storage.save.callCount.should.equal(1)
+
+        // and also removed one of them
+        storage.remove.callCount.should.equal(0)
+
+        done()
+      })
+    })
+  })
 })
