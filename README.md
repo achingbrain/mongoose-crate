@@ -91,7 +91,9 @@ post.attach('attachments', {path: '/path/to/file'}, function(error) {
 ```
 ### Images
 
-See [mongoose-crate-imagemagick](https://github.com/achingbrain/mongoose-crate-imagemagick).
+See [mongoose-crate-gm](https://github.com/achingbrain/mongoose-crate-gm).
+
+[mongoose-crate-imagemagick](https://github.com/achingbrain/mongoose-crate-imagemagick) is also available but should be considered deprecated because the underlying dependencies are no longer maintained.
 
 #### Using with Express.js uploads
 
