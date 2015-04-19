@@ -23,18 +23,32 @@
   },
   "dependencies": {
     "async": "^0.9",
-    "check-types": "^2.2",
+    "check-types": "^3.1.1",
     "mmmagic": "^0.3"
   },
   "devDependencies": {
     "coveralls": "^2.8",
     "istanbul": "^0.3",
     "mocha": "^2.1",
-    "mongoose": "^3.8",
-    "pre-commit": "^0.0",
-    "should": "^4.0",
+    "mongoose": "3.8.21",
+    "pre-commit": "^1.0.6",
+    "should": "^6.0.0",
     "sinon": "^1.9",
-    "tingodb": "^0.3",
-    "tungus": "^0.0"
+    "tingodb": "^0.3.4",
+    "tungus": "^0.0.4"
+  },
+  "jshintConfig": {
+    "asi": true,
+    "browser": false,
+    "browserify": true,
+    "curly": false,
+    "expr": true,
+    "indent": 2,
+    "loopfunc": true,
+    "node": true,
+    "trailing": true,
+    "undef": true,
+    "white": true,
+    "mocha": true
   }
 }

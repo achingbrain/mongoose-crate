@@ -33,4 +33,3 @@ module.exports = function(callback) {
 
   callback(model, storage)
 }
-

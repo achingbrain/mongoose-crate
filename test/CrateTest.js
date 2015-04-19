@@ -18,9 +18,7 @@ describe('Crate', function() {
   before(function(done) {
     var dataDirectory = path.join(os.tmpdir(), randomString(10))
     fs.mkdirSync(dataDirectory)
-    mongoose.connect('tingodb://' + dataDirectory)
-
-    done()
+    mongoose.connect('tingodb://' + dataDirectory, done)
   })
 
   it('should attach a file', function(done) {
