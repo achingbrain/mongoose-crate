@@ -38,6 +38,9 @@ describe('Crate', function() {
         // this can vary depending on file system...
         model.file.size.should.be.greaterThan(17000)
 
+        var pattern = model.constructor.modelName.toLowerCase() + '/file/' + model.id + '-\\d{13}-node_js_logo.png'
+        model.file.url.should.match(new RegExp(pattern))
+
         done()
       })
     })

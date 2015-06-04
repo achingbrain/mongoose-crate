@@ -5,12 +5,13 @@ var mongoose = require('mongoose'),
 
 module.exports = function(callback) {
   var storage = {
-    save: sinon.stub(),
     remove: sinon.stub()
   }
 
   // happy path
-  storage.save.callsArgWith(1, undefined, randomString(10))
+  storage.save = function (attachment, callback) {
+    callback(undefined, attachment.target || randomString(10))
+  }
   storage.remove.callsArg(1)
 
   var StubSchema = new mongoose.Schema({
