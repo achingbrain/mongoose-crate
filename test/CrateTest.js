@@ -3,7 +3,7 @@ var should = require('should'),
   path = require('path'),
   os = require('os'),
   fs = require('fs'),
-  tungus = require('tungus'),
+  //tungus = require('tungus'),
   mongoose = require('mongoose'),
   async = require('async'),
   randomString = require('./fixtures/randomString'),
@@ -11,15 +11,17 @@ var should = require('should'),
   createSchema = require('./fixtures/StubSchema'),
   createSchemaWithArrayProperty = require('./fixtures/StubSchemaWithArrayProperty'),
   createSchemaWithFileProcessor = require('./fixtures/StubSchemaWithFileProcessor'),
-  createSchemaWithUnselectedName = require('./fixtures/StubSchemaWithUnselectedName')
-  providerWithTarget = require('./fixtures/StubStorageProviderWithTarget')
+  createSchemaWithUnselectedName = require('./fixtures/StubSchemaWithUnselectedName'),
+  Mobi = require('./fixtures/Mobi')
+  EPub = require('./fixtures/EPub')
 
 describe('Crate', function() {
 
   before(function(done) {
-    var dataDirectory = path.join(os.tmpdir(), randomString(10))
-    fs.mkdirSync(dataDirectory)
-    mongoose.connect('tingodb://' + dataDirectory, done)
+    //var dataDirectory = path.join(os.tmpdir(), randomString(10))
+    //fs.mkdirSync(dataDirectory)
+    //mongoose.connect('tingodb://' + dataDirectory, done)
+    mongoose.connect(process.env.BOXEN_MONGODB_URL, done)
   })
 
   it('should attach a file', function(done) {
@@ -39,31 +41,10 @@ describe('Crate', function() {
         // this can vary depending on file system...
         model.file.size.should.be.greaterThan(17000)
 
-        //var pattern = model.constructor.modelName.toLowerCase() + '/file/' + model.id + '-\\d{13}-node_js_logo.png'
-        //model.file.url.should.match(new RegExp(pattern))
-
         done()
       })
     })
   })
-
-  //it.only('builds a target for the provider to use', function(done) {
-    //var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
-
-    //createSchemaWithFileProcessor(providerWithTarget, function(StubSchema, storage) {
-      //var model = new StubSchema()
-      //model.attach('file', {
-        //path: file
-      //}, function (error) {
-        //should(error).not.ok
-
-        //var pattern = model.constructor.modelName.toLowerCase() + '/file/' + model.id + '-\\d{13}-node_js_logo.png'
-        //model.file.url.should.match(new RegExp(pattern))
-
-        //done()
-      //})
-    //})
-  //})
 
   it('should attach a file to an array', function(done) {
     var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
@@ -804,6 +785,48 @@ describe('Crate', function() {
         // and also removed one of them
         storage.remove.callCount.should.equal(0)
 
+        done()
+      })
+    })
+  })
+
+  context('where the file is stored', function(){
+    var mobi, epub;
+
+    beforeEach(function(){
+      mobi = new Mobi({ content: 'This Mobi will be epic!' })
+      epub = new EPub({ content: 'This ePub will be epic!' })
+    });
+
+    it('stores the file at the default target', function(done) {
+      should(mobi.hardCopy.url).not.be.ok
+
+      mobi.save(function(err) {
+        should(err).not.be.ok
+        should(mobi.hardCopy.url).be.ok
+        should(mobi.hardCopy.url).match(new RegExp('^Mobi/hardCopy/' + mobi.id + '.mobi$'))
+        done()
+      })
+    })
+
+    it('stores the file at the target set for the model', function(done) {
+      should(epub.hardCopy.url).not.be.ok
+
+      epub.save(function(err) {
+        should(err).not.be.ok
+        should(epub.hardCopy.url).be.ok
+        should(epub.hardCopy.url).match(new RegExp('^artifacts/Epub/' + epub.id + '-' + epub.updated_at.getTime() + '.epub$'))
+        done()
+      })
+    })
+
+    it('stores the file at the target set per field', function(done) {
+      should(epub.harderCopy.url).not.be.ok
+
+      epub.save(function(err) {
+        should(err).not.be.ok
+        should(epub.harderCopy.url).be.ok
+        should(epub.harderCopy.url).match(new RegExp('^deepArtifacts/Epub/harderCopy/' + epub.id + '-' + epub.updated_at.getTime() + '.epub$'))
         done()
       })
     })

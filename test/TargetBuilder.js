@@ -1,188 +1,223 @@
 var should = require('should'),
     mongoose = require('mongoose'),
-    randomString = require('./fixtures/randomString'),
+    Person = require('./fixtures/Person'),
     targetBuilder = require('../lib/TargetBuilder')
 
 describe('Crate', function () {
-  var Person, person, personSchema
-    , attachement
+  var person
+    , attachment = {
+        path: '/path/to/my/attchment.pdf',
+        type: 'application/pdf',
+        name: 'attachment.pdf',
+        size: 120874
+      }
 
   before(function (){
-    attachment = {
-      path: '/path/to/my/attchment.pdf',
-      type: 'application/pdf',
-      name: 'attachment.pdf',
-      size: 120874
-    }
-
-    personSchema = new mongoose.Schema({
-      type: String,
-      salt: {
-        default: function () { return randomString(16) },
-        type: String,
-      },
-      tags: {
-        type: Array,
-      },
-      firstName: String,
-      lastName: String,
-      updated_at: {
-        default: function () { return new Date() },
-        type: Date
-      }
-    })
-
-    personSchema.virtual('fullName').get(function (){
-      return [
-        this.firstName,
-        this.lastName
-      ].map(function (v) {
-        return v.toLowerCase()
-      }).join('-')
-    })
-
-    personSchema.methods.profileStatus = function (){
-      return 'complete'
-    }
-    Person = mongoose.model('Person', personSchema)
     person = new Person({
       firstName: 'Jerry',
       lastName: 'Biggles',
       type: 'ball',
-      tags: [ 'employee', 'manager' ]
+      tags: [ 'employee', 'manager' ],
+      meta: {
+        phone: '1-333-333-4444'
+      }
     })
   })
 
   context('validation', function (){
-    it('requires a model', function () {
-      (function () {
-        targetBuilder(undefined, 'field', attachment, 'format')
-      }).should.throw('model is required')
+    it('requires a model', function (done) {
+      targetBuilder(undefined, 'field', attachment, 'format', function (error, target){
+        should(error).exist
+        error.message.should.eql('model is required')
+        done()
+      })
     })
 
-    it('requires a field', function () {
-      (function () {
-        targetBuilder(person, undefined, attachment, 'format')
-      }).should.throw('field is required')
+    it('requires a field', function (done) {
+      targetBuilder(person, undefined, attachment, 'format', function (error, target) {
+        should(error).exist
+        error.message.should.eql('field is required')
+        done()
+      })
     })
 
-    it('requires an attachment', function () {
-      (function () {
-        targetBuilder(person, 'field', undefined, 'format')
-      }).should.throw('attachment is required')
+    it('requires an attachment', function (done) {
+      targetBuilder(person, 'field', undefined, 'format', function (error, target) {
+        should(error).exist
+        error.message.should.eql('attachment is required')
+        done()
+      })
     })
 
-    it('requires a format', function () {
-      (function () {
-        targetBuilder(person, 'field', attachment)
-      }).should.throw('format is required')
+    it('requires a format', function (done) {
+      targetBuilder(person, 'field', attachment, undefined, function (error, target) {
+        should(error).exist
+        error.message.should.eql('format is required')
+        done()
+      })
+    })
+  })
+
+  context('invalid values for keys', function (){
+    describe('when the resolved value is falsey', function () {
+      it('throws an error', function (done) {
+        targetBuilder(person, 'image', attachment, ':not_real', function (error, target) {
+          should(error).exist
+          error.message.should.eql(':not_real resolved to a falsey value')
+          done()
+        })
+      })
     })
 
-    it('throws an error if the key is undefined', function () {
-      (function () {
-        targetBuilder(person, 'image', attachment, ':not_real')
-      }).should.throw(':not_real does not resolve to a value')
+    describe('when the resolved value is an Array', function () {
+      it('throws an error', function (done) {
+        targetBuilder(person, 'image', attachment, ':tags', function (error, target) {
+          should(error).exist
+          error.message.should.eql(':tags returned unsupported type Array')
+          done()
+        })
+      })
     })
 
-    it('throws an error if they key evaluates to an Array', function () {
-      (function () {
-        targetBuilder(person, 'image', attachment, ':tags')
-      }).should.throw(':tags returned unsupported type Array')
+    describe('when the resolved value is an Object', function () {
+      it('throws an error', function (done) {
+        targetBuilder(person, 'image', attachment, ':meta', function (error, target) {
+          should(error).exist
+          error.message.should.eql(':meta returned unsupported type Object')
+          done()
+        })
+      })
+    })
+
+    describe('when the resolved value is a function that returns a falsey value', function () {
+      it('throws an error', function (done) {
+        targetBuilder(person, 'image', attachment, ':age', function (error, target) {
+          should(error).exist
+          error.message.should.eql(':age resolved to a falsey value')
+          done()
+        })
+      })
     })
   })
 
   context('defaults', function (){
-    it('uses the attachment fileExt', function () {
-      targetBuilder(person, 'image', attachment, 'file').should.eql(
-        'file.pdf'
-      )
+    it('uses the attachment fileExt', function (done) {
+      targetBuilder(person, 'image', attachment, 'file', function (error, target) {
+        should(error).not.exist
+        target.should.eql('file.pdf')
+        done()
+      })
     })
 
-    it('ignores non-keywrods', function () {
-      targetBuilder(person, 'image', attachment, '/my/path/for/:type').should.eql(
-        '/my/path/for/ball.pdf'
-      )
+    it('ignores non-keywrods', function (done) {
+      targetBuilder(person, 'image', attachment, '/my/path/for/:type', function (error, target) {
+        should(error).not.exist
+        target.should.eql('/my/path/for/ball.pdf')
+        done()
+      })
     })
   })
 
   context('build from model paths', function (){
-    it('will replace single paths', function () {
-      targetBuilder(person, 'image', attachment, ':type').should.eql(
-        'ball.pdf'
-      )
+    it('will replace single paths', function (done) {
+      targetBuilder(person, 'image', attachment, ':type', function (error, target) {
+        should(error).not.exist
+        target.should.eql('ball.pdf')
+        done()
+      })
     })
 
-    it('will replace multiple paths', function () {
-      targetBuilder(person, 'image', attachment, ':type/:type').should.eql(
-        'ball/ball.pdf'
-      )
+    it('will replace multiple paths', function (done) {
+      targetBuilder(person, 'image', attachment, ':type/:type', function (error, target) {
+        should(error).not.exist
+        target.should.eql('ball/ball.pdf')
+        done()
+      })
     })
 
-    it('will replace many different paths', function () {
-      targetBuilder(person, 'image', attachment, ':type/:_id/:salt').should.eql(
-        [ 'ball', person._id, person.salt ].join('/') + '.pdf'
-      )
+    it('will replace many different paths', function (done) {
+      targetBuilder(person, 'image', attachment, ':type/:_id/:salt', function(error, target){
+        should(error).not.exist
+        target.should.eql([ 'ball', person._id, person.salt ].join('/') + '.pdf')
+        done()
+      })
     })
   })
 
   context('virtuals', function (){
-    it('builds from virtuals', function () {
-      targetBuilder(person, 'image', attachment, ':type/:fullName').should.eql(
-        'ball/jerry-biggles.pdf'
-      )
+    it('builds from virtuals', function (done) {
+      targetBuilder(person, 'image', attachment, ':type/:fullName', function (error, target) {
+        should(error).not.exist
+        target.should.eql('ball/jerry-biggles.pdf')
+        done()
+      })
     })
   })
 
   context('functions', function (){
-    it('builds from functions', function () {
-      targetBuilder(person, 'image', attachment, ':type/:profileStatus').should.eql(
-        'ball/complete.pdf'
-      )
+    it('builds from functions', function (done) {
+      targetBuilder(person, 'image', attachment, ':type/:profileStatus', function (error, target) {
+        should(error).not.exist
+        target.should.eql('ball/complete.pdf')
+        done()
+      })
     })
   })
 
   context('formatting types', function (){
-    it('formates dates as getTime', function () {
-      targetBuilder(person, 'image', attachment, ':id/:updated_at').should.eql(
-        [ person.id, person.updated_at.getTime() ].join('/') + '.pdf'
-      )
+    it('formats dates as getTime', function (done) {
+      targetBuilder(person, 'image', attachment, ':id/:updated_at', function (error, target) {
+        should(error).not.exist
+        target.should.eql([ person.id, person.updated_at.getTime() ].join('/') + '.pdf')
+        done()
+      })
     })
   })
 
   context('special keys', function (){
     context('model', function () {
-      it('uses the modelName of the instance', function () {
-        targetBuilder(person, 'image', attachment, ':modelName/:id').should.eql(
-          [ 'Person', person.id ].join('/') + '.pdf'
-        )
+      it('uses the modelName of the instance', function (done) {
+        targetBuilder(person, 'image', attachment, ':modelName/:id', function (error, target) {
+          should(error).not.exist
+          target.should.eql([ 'Person', person.id ].join('/') + '.pdf')
+          done()
+        })
       })
 
-      it('uses the collectionName of the instance', function () {
-        targetBuilder(person, 'image', attachment, ':collectionName/:id').should.eql(
-          [ 'people', person.id ].join('/') + '.pdf'
-        )
+      it('uses the collectionName of the instance', function (done) {
+        targetBuilder(person, 'image', attachment, ':collectionName/:id', function (error, target) {
+          should(error).not.exist
+          target.should.eql([ 'people', person.id ].join('/') + '.pdf')
+          done()
+        })
       })
     })
 
     context('field', function () {
-      it('used the field name', function () {
-        targetBuilder(person, 'image', attachment, ':collectionName/:fieldName/:id').should.eql(
-          [ 'people', 'image', person.id ].join('/') + '.pdf'
-        )
+      it('used the field name', function (done) {
+        targetBuilder(person, 'image', attachment, ':collectionName/:fieldName/:id', function (error, target) {
+          should(error).not.exist
+          target.should.eql([ 'people', 'image', person.id ].join('/') + '.pdf')
+          done()
+        })
       })
     })
 
     context('attachment', function () {
-      it('can use the attachment name', function () {
-        targetBuilder(person, 'image', attachment, ':collectionName/:fieldName/:id-:attachmentName').should.eql(
-          [ 'people', 'image', [ person.id, 'attachment' ].join('-') ].join('/') + '.pdf'
-        )
+      it('can use the attachment name', function (done) {
+        targetBuilder(person, 'image', attachment, ':collectionName/:fieldName/:id-:attachmentName', function (error, target) {
+          should(error).not.exist
+          target.should.eql([ 'people', 'image', [ person.id, 'attachment' ].join('-') ].join('/') + '.pdf')
+          done()
+        })
       })
 
-      it('can use the attachment size', function () {
-        targetBuilder(person, 'image', attachment, ':collectionName/:fieldName/:id-:attachmentName-:attachmentSize').should.eql(
-          [ 'people', 'image', [ person.id, 'attachment', attachment.size ].join('-') ].join('/') + '.pdf'
-        )
+      it('can use the attachment size', function (done) {
+        targetBuilder(person, 'image', attachment, ':collectionName/:fieldName/:id-:attachmentName-:attachmentSize', function (error, target) {
+          should(error).not.exist
+          target.should.eql([ 'people', 'image', [ person.id, 'attachment', attachment.size ].join('-') ].join('/') + '.pdf')
+          done()
+        })
       })
     })
   })

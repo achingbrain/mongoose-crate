@@ -9,10 +9,6 @@ module.exports = function(callback) {
     remove: sinon.stub()
   }
 
-  // happy path
-  //storage.save = function (attachment, callback) {
-    //callback(undefined, attachment.target || randomString(10))
-  //}
   storage.save.callsArgWith(1, undefined, randomString(10))
   storage.remove.callsArg(1)
 
