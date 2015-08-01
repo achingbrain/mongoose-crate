@@ -10,7 +10,7 @@ StubStorageProvider.prototype.save = function(attachment, doc, callback) {
   callback(null, attachment)
 }
 
-StubStorageProvider.prototype.remove = function(attachment, callback) {
+StubStorageProvider.prototype.remove = function(attachment, doc, callback) {
   callback()
 }
 

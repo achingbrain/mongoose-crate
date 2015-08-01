@@ -33,7 +33,7 @@ StubFileProcessor.prototype.willOverwrite = function(model) {
 }
 
 StubFileProcessor.prototype.remove = function(storageProvider, model, doc, callback) {
-  storageProvider.remove(model, callback)
+  storageProvider.remove(model, doc, callback)
 }
 
 module.exports = StubFileProcessor
