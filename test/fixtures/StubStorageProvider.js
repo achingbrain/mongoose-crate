@@ -6,7 +6,7 @@ var StubStorageProvider = function() {
 }
 util.inherits(StubStorageProvider, StorageProvider)
 
-StubStorageProvider.prototype.save = function(attachment, callback) {
+StubStorageProvider.prototype.save = function(attachment, doc, callback) {
   callback(null, attachment)
 }
 
