@@ -486,7 +486,7 @@ describe('Crate', function() {
       foo: {},
       bar: {}
     })
-    fileProcessor.process = function(attachment, storageProvider, model, callback) {
+    fileProcessor.process = function(attachment, storageProvider, model, doc, callback) {
       storageProvider.save(attachment, function(error, url) {
         ['foo', 'bar'].forEach(function(property) {
           model[property] = {
@@ -501,7 +501,7 @@ describe('Crate', function() {
       })
     }
     fileProcessor.shouldRemove.returns(true)
-    fileProcessor.remove.callsArg(2)
+    fileProcessor.remove.callsArg(3)
 
     createSchemaWithFileProcessor(fileProcessor, function(StubSchema, storage) {
       var model = new StubSchema()
