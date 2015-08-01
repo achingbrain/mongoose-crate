@@ -17,8 +17,8 @@ StubFileProcessor.prototype.createFieldSchema = function() {
   }
 }
 
-StubFileProcessor.prototype.process = function(attachment, storageProvider, model, callback) {
-  storageProvider.save(attachment, function(error, url) {
+StubFileProcessor.prototype.process = function(attachment, storageProvider, model, doc, callback) {
+  storageProvider.save(attachment, doc, function(error, url) {
     model.size = attachment.size
     model.name = attachment.name
     model.type = attachment.type
@@ -32,8 +32,8 @@ StubFileProcessor.prototype.willOverwrite = function(model) {
   return !!model.url
 }
 
-StubFileProcessor.prototype.remove = function(storageProvider, model, callback) {
-  storageProvider.remove(model, callback)
+StubFileProcessor.prototype.remove = function(storageProvider, model, doc, callback) {
+  storageProvider.remove(model, doc, callback)
 }
 
 module.exports = StubFileProcessor

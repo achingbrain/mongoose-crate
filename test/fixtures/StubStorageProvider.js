@@ -6,11 +6,11 @@ var StubStorageProvider = function() {
 }
 util.inherits(StubStorageProvider, StorageProvider)
 
-StubStorageProvider.prototype.save = function(path, callback) {
-  callback(null, path)
+StubStorageProvider.prototype.save = function(attachment, doc, callback) {
+  callback(null, attachment)
 }
 
-StubStorageProvider.prototype.remove = function(attachment, callback) {
+StubStorageProvider.prototype.remove = function(attachment, doc, callback) {
   callback()
 }
 
