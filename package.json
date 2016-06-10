@@ -19,8 +19,11 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha",
-    "coveralls": "istanbul cover _mocha && cat ./coverage/lcov.info | coveralls"
+    "test": "mocha --recursive",
+    "test:coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive",
+    "test:coverage:check": "istanbul cover _mocha -- --recursive && istanbul check-coverage --statement 100 --branch 100 --function 100",
+    "lint": "standard",
+    "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
     "async": "^1.5.2",
@@ -35,21 +38,20 @@
     "pre-commit": "^1.0.6",
     "should": "^9.0.1",
     "sinon": "^1.9",
+    "standard": "^7.1.2",
     "tingodb": "^0.3.4",
     "tungus": "^0.0.4"
   },
-  "jshintConfig": {
-    "asi": true,
-    "browser": false,
-    "browserify": true,
-    "curly": false,
-    "expr": true,
-    "indent": 2,
-    "loopfunc": true,
-    "node": true,
-    "trailing": true,
-    "undef": true,
-    "white": true,
-    "mocha": true
+  "pre-commit": ["test:coverage:check", "lint"],
+  "standard": {
+    "globals": [
+      "describe",
+      "context",
+      "before",
+      "beforeEach",
+      "after",
+      "afterEach",
+      "it"
+    ]
   }
 }

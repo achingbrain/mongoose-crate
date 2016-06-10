@@ -1,10 +1,12 @@
-var mongoose = require('mongoose'),
-  crate = require('../../index'),
-  sinon = require('sinon'),
-  randomString = require('./randomString')
+'use strict'
 
-module.exports = function(processor, callback) {
-  var storage = {
+const mongoose = require('mongoose')
+const crate = require('../../index')
+const sinon = require('sinon')
+const randomString = require('./randomString')
+
+module.exports = (processor, callback) => {
+  const storage = {
     save: sinon.stub(),
     remove: sinon.stub()
   }
@@ -13,7 +15,7 @@ module.exports = function(processor, callback) {
   storage.save.callsArgWith(1, undefined, randomString(10))
   storage.remove.callsArg(1)
 
-  var StubSchema = new mongoose.Schema({
+  const StubSchema = new mongoose.Schema({
     name: {
       type: String,
       required: true
@@ -29,7 +31,7 @@ module.exports = function(processor, callback) {
     }
   })
 
-  var model = mongoose.model(randomString(10), StubSchema)
+  const model = mongoose.model(randomString(10), StubSchema)
 
   callback(model, storage)
 }

@@ -1,10 +1,8 @@
 const should = require('should')
-const sinon = require('sinon')
 const StorageProvider = require('../lib/StorageProvider')
 
-describe('StorageProvider', function() {
-
-  it('should throw on unimplemented save method', function () {
+describe('StorageProvider', () => {
+  it('should throw on unimplemented save method', () => {
     var storageProvider = new StorageProvider()
 
     should.throws(() => {
@@ -12,7 +10,7 @@ describe('StorageProvider', function() {
     })
   })
 
-  it('should throw on unimplemented remove method', function () {
+  it('should throw on unimplemented remove method', () => {
     var storageProvider = new StorageProvider()
 
     should.throws(() => {

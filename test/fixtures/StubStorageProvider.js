@@ -1,17 +1,15 @@
-var util = require('util'),
-  StorageProvider = require('../../lib/StorageProvider')
+'use strict'
 
-var StubStorageProvider = function() {
-  StorageProvider.call(this)
-}
-util.inherits(StubStorageProvider, StorageProvider)
+const StorageProvider = require('../../lib/StorageProvider')
 
-StubStorageProvider.prototype.save = function(path, callback) {
-  callback(null, path)
-}
+class StubStorageProvider extends StorageProvider {
+  save (path, callback) {
+    callback(null, path)
+  }
 
-StubStorageProvider.prototype.remove = function(attachment, callback) {
-  callback()
+  remove (attachment, callback) {
+    callback()
+  }
 }
 
 module.exports = StubStorageProvider
