@@ -2,6 +2,7 @@
   "author": "Alex Potsides",
   "name": "mongoose-crate",
   "description": "Attach files to MongoDB models via Mongoose.js",
+  "license": "ISC",
   "keywords": [
     "mongoose",
     "s3",
@@ -28,11 +29,11 @@
   },
   "devDependencies": {
     "coveralls": "^2.8",
-    "istanbul": "^0.3",
+    "istanbul": "^0.4.3",
     "mocha": "^2.1",
-    "mongoose": "3.8.21",
+    "mongoose": "^3.8.40",
     "pre-commit": "^1.0.6",
-    "should": "^6.0.0",
+    "should": "^9.0.1",
     "sinon": "^1.9",
     "tingodb": "^0.3.4",
     "tungus": "^0.0.4"

@@ -43,6 +43,29 @@ describe('Crate', function() {
     })
   })
 
+  it('should attach a file and override parameters', function(done) {
+    var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
+
+    createSchema(function(StubSchema) {
+      var model = new StubSchema()
+      model.attach('file', {
+        path: file,
+        type: 'foo/bar',
+        name: 'hello',
+        size: 5
+      }, function (error) {
+        should(error).not.ok
+
+        model.file.type.should.equal('foo/bar')
+        model.file.name.should.equal('hello')
+        model.file.size.should.equal(5)
+        model.file.url.should.be.ok
+
+        done()
+      })
+    })
+  })
+
   it('should attach a file to an array', function(done) {
     var file = path.resolve(__dirname + '/./fixtures/node_js_logo.png')
 
@@ -785,5 +808,29 @@ describe('Crate', function() {
         done()
       })
     })
+  })
+
+  it('should use os temp dir if not passed as an option', function () {
+    var crate = new Crate()
+    var options = {
+      fields: {}
+    }
+
+    crate._validateOptions(options)
+
+    options.tempDir.should.equal(os.tmpdir())
+  })
+
+  it('should use passed temp dir', function () {
+    var crate = new Crate()
+    var tempDir = 'foo'
+    var options = {
+      fields: {},
+      tempDir: tempDir
+    }
+
+    crate._validateOptions(options)
+
+    options.tempDir.should.equal(tempDir)
   })
 })
