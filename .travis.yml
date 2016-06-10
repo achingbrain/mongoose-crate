@@ -12,7 +12,5 @@ addons:
     packages:
     - g++-4.8
     - gcc-4.8
-# for some reason we have to re-install mongoose to run the tests, ugh.
-before_script: npm install mongoose@3.8.40
 script: npm run test:coverage:check
 after_script: npm run coveralls
