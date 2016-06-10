@@ -1,6 +1,6 @@
 # mongoose-crate
 
-[![Dependency Status](https://david-dm.org/achingbrain/mongoose-crate.svg?theme=shields.io)](https://david-dm.org/achingbrain/mongoose-crate) [![devDependency Status](https://david-dm.org/achingbrain/mongoose-crate/dev-status.svg?theme=shields.io)](https://david-dm.org/achingbrainmongoose-crate#info=devDependencies) [![Build Status](https://img.shields.io/travis/achingbrain/mongoose-crate/master.svg)](https://travis-ci.org/achingbrain/mongoose-crate) [![Coverage Status](http://img.shields.io/coveralls/achingbrain/mongoose-crate/master.svg)](https://coveralls.io/r/achingbrain/mongoose-crate)
+[![Dependency Status](https://david-dm.org/achingbrain/mongoose-crate.svg?theme=shields.io)](https://david-dm.org/achingbrain/mongoose-crate) [![devDependency Status](https://david-dm.org/achingbrain/mongoose-crate/dev-status.svg?theme=shields.io)](https://david-dm.org/achingbrain/mongoose-crate#info=devDependencies) [![Build Status](https://img.shields.io/travis/achingbrain/mongoose-crate/master.svg)](https://travis-ci.org/achingbrain/mongoose-crate) [![Coverage Status](http://img.shields.io/coveralls/achingbrain/mongoose-crate/master.svg)](https://coveralls.io/r/achingbrain/mongoose-crate)
 
 mongoose-crate is a plugin for [Mongoose](http://mongoosejs.com/) for attaching files to documents.
 
