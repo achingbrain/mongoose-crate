@@ -15,11 +15,11 @@ The architecture is nominally based on [mongoose-attachments](https://github.com
 The following example extends the 'Post' model to use attachments with a property called 'attachment'.
 
 ```javascript
-var mongoose = require('mongoose'),
-  crate = require('mongoose-crate'),
-  LocalFS = require('mongoose-crate-localfs')
+const mongoose = require('mongoose')
+const crate = require('mongoose-crate')
+const LocalFS = require('mongoose-crate-localfs')
 
-var PostSchema = new mongoose.Schema({
+const PostSchema = new mongoose.Schema({
   title: String
 })
 
@@ -32,19 +32,19 @@ PostSchema.plugin(crate, {
   }
 })
 
-var Post = mongoose.model('Post', PostSchema)
+const Post = mongoose.model('Post', PostSchema)
 ```
 
 .. then later:
 
 ```javascript
-var post = new Post()
-post.attach('attachment', {path: '/path/to/file'}, function(error) {
+const post = new Post()
+post.attach('attachment', {path: '/path/to/file'}, (error) => {
 	// attachment is now attached and post.attachment is populated e.g.:
 	// post.attachment.url
 
 	// don't forget to save it..
-	post.save(function(error) {
+	post.save((error) => {
 		// post is now persisted
 	})
 })
@@ -55,11 +55,11 @@ post.attach('attachment', {path: '/path/to/file'}, function(error) {
 Files can be stored in arrays as well as individual properties. Just specify the `array` property to the field definition:
 
 ```javascript
-var mongoose = require('mongoose'),
-  crate = require('mongoose-crate'),
-  LocalFS = require('mongoose-crate-localfs')
+const mongoose = require('mongoose')
+const crate = require('mongoose-crate')
+const LocalFS = require('mongoose-crate-localfs')
 
-var PostSchema = new mongoose.Schema({
+const PostSchema = new mongoose.Schema({
   title: String
 })
 
@@ -74,17 +74,17 @@ PostSchema.plugin(crate, {
   }
 })
 
-var Post = mongoose.model('Post', PostSchema)
+const Post = mongoose.model('Post', PostSchema)
 ```
 
 .. then later:
 
 ```javascript
-var post = new Post()
-post.attach('attachments', {path: '/path/to/file'}, function(error) {
+const post = new Post()
+post.attach('attachments', {path: '/path/to/file'}, (error) => {
   // post.attachments.length == 1
 
-  post.attach('attachments', {path: '/path/to/another/file'}, function(error) {
+  post.attach('attachments', {path: '/path/to/another/file'}, (error) => {
     // post.attachments.length == 2
   })
 })
@@ -100,14 +100,14 @@ See [mongoose-crate-gm](https://github.com/achingbrain/mongoose-crate-gm).
 Assuming that the HTML form sent a file in a field called 'image':
 
 ```javascript
-app.post('/upload', function(req, res, next) {
-  var post = new mongoose.model('Post')()
+app.post('/upload', (req, res, next) => {
+  const post = new mongoose.model('Post')()
   post.title = req.body.title
   post.description = req.body.description
-  post.attach('image', req.files.image, function(err) {
-    if(err) return next(err)
-    post.save(function(err) {
-      if(err) return next(err)
+  post.attach('image', req.files.image, (err) => {
+    if (err) return next(err)
+    post.save((err) => {
+      if (err) return next(err)
       res.send('Post has been saved with file!')
     })
   })
@@ -117,13 +117,13 @@ app.post('/upload', function(req, res, next) {
 #### Using with an stand-alone app files
 
 ```javascript
-var post = new mongoose.model('Post')()
+const post = new mongoose.model('Post')()
 post.title = 'Title of the Post'
 post.description = 'Description of the Post'
-post.attach('image', '/path/to/the/file.png', function(err) {
-    if(err) return next(err)
-    post.save(function(err) {
-      if(err) return next(err)
+post.attach('image', '/path/to/the/file.png', (err) => {
+    if (err) return next(err)
+    post.save((err) => {
+      if (err) return next(err)
       console.log('Post has been Saved with file')
     })
 })
@@ -165,7 +165,7 @@ MySchema.remove({...}, callback)
 or this:
 
 ```javascript
-MySchema.findOne({...}, function(err, doc) {
+MySchema.findOne({...}, (err, doc) => {
   doc.remove(callback)
 })
 ```
@@ -179,11 +179,11 @@ MySchema.findOne({...}).remove(callback)
 ### Array attachment deletion
 
 ```javascript
-var mongoose = require('mongoose'),
-  crate = require('mongoose-crate'),
-  LocalFS = require('mongoose-crate-localfs')
+const mongoose = require('mongoose')
+const crate = require('mongoose-crate')
+const LocalFS = require('mongoose-crate-localfs')
 
-var MySchema = new mongoose.Schema({
+const MySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -203,7 +203,7 @@ MySchema.plugin(crate, {
 
 // ...
 
-var model = new MySchema()
+const model = new MySchema()
 model.name = 'hello'
 model.attach('files', {
     path: file
@@ -218,11 +218,11 @@ model.save()
 ### Non array attachment deletion
 
 ```javascript
-var mongoose = require('mongoose'),
-  crate = require('mongoose-crate'),
-  LocalFS = require('mongoose-crate-localfs')
+const mongoose = require('mongoose')
+const crate = require('mongoose-crate')
+const LocalFS = require('mongoose-crate-localfs')
 
-var MySchema = new mongoose.Schema({
+const MySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -240,7 +240,7 @@ MySchema.plugin(crate, {
 
 // ...
 
-var model = new MySchema()
+const model = new MySchema()
 model.name = 'hello'
 model.attach('file', {
     path: file
