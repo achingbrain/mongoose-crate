@@ -39,10 +39,13 @@
     "should": "^9.0.1",
     "sinon": "^1.9",
     "standard": "^7.1.2",
-    "tingodb": "^0.3.4",
-    "tungus": "^0.0.4"
+    "tingodb": "^0.4.2",
+    "tungus": "0.0.5"
   },
-  "pre-commit": ["test:coverage:check", "lint"],
+  "pre-commit": [
+    "test:coverage:check",
+    "lint"
+  ],
   "standard": {
     "globals": [
       "describe",
