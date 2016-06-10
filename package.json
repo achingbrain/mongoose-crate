@@ -22,9 +22,9 @@
     "coveralls": "istanbul cover _mocha && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
-    "async": "^0.9",
-    "check-types": "^3.1.1",
-    "mmmagic": "^0.3"
+    "async": "^1.5.2",
+    "check-types": "^7.0.0",
+    "mmmagic": "^0.4.4"
   },
   "devDependencies": {
     "coveralls": "^2.8",
