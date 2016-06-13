@@ -45,16 +45,5 @@
   "pre-commit": [
     "test:coverage:check",
     "lint"
-  ],
-  "standard": {
-    "globals": [
-      "describe",
-      "context",
-      "before",
-      "beforeEach",
-      "after",
-      "afterEach",
-      "it"
-    ]
-  }
+  ]
 }

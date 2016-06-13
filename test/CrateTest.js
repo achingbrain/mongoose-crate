@@ -12,6 +12,9 @@ const createSchema = require('./fixtures/StubSchema')
 const createSchemaWithArrayProperty = require('./fixtures/StubSchemaWithArrayProperty')
 const createSchemaWithFileProcessor = require('./fixtures/StubSchemaWithFileProcessor')
 const createSchemaWithUnselectedName = require('./fixtures/StubSchemaWithUnselectedName')
+const describe = require('mocha').describe
+const before = require('mocha').before
+const it = require('mocha').it
 
 describe('Crate', () => {
   before((done) => {
