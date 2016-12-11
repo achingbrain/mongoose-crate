@@ -1,3 +1,5 @@
+'use strict'
+
 const Crate = require('./lib/Crate')
 const StorageProvider = require('./lib/StorageProvider')
 const FileProcessor = require('./lib/FileProcessor')

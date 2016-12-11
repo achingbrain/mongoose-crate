@@ -50,6 +50,15 @@ post.attach('attachment', {path: '/path/to/file'}, (error) => {
 })
 ```
 
+.. or using promises:
+
+```javascript
+const post = new Post()
+post
+  .attach('attachment', {path: '/path/to/file'})
+  .then(() => post.save())
+```
+
 ### Arrays
 
 Files can be stored in arrays as well as individual properties. Just specify the `array` property to the field definition:
@@ -89,6 +98,15 @@ post.attach('attachments', {path: '/path/to/file'}, (error) => {
   })
 })
 ```
+
+.. or using promises:
+
+```javascript
+const post = new Post()
+post.attach('attachments', {path: '/path/to/file'})
+.then(() => post.attach('attachments', {path: '/path/to/another/file'}))
+```
+
 ### Images
 
 See [mongoose-crate-gm](https://github.com/achingbrain/mongoose-crate-gm).
@@ -104,28 +122,10 @@ app.post('/upload', (req, res, next) => {
   const post = new mongoose.model('Post')()
   post.title = req.body.title
   post.description = req.body.description
-  post.attach('image', req.files.image, (err) => {
-    if (err) return next(err)
-    post.save((err) => {
-      if (err) return next(err)
-      res.send('Post has been saved with file!')
-    })
-  })
-})
-```
-
-#### Using with an stand-alone app files
-
-```javascript
-const post = new mongoose.model('Post')()
-post.title = 'Title of the Post'
-post.description = 'Description of the Post'
-post.attach('image', '/path/to/the/file.png', (err) => {
-    if (err) return next(err)
-    post.save((err) => {
-      if (err) return next(err)
-      console.log('Post has been Saved with file')
-    })
+  post.attach('image', req.files.image)
+    .then(() => post.save())
+    .then(() => res.send('Post has been saved with file!'))
+    .catch(err => next(err))
 })
 ```
 

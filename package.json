@@ -26,19 +26,20 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
-    "async": "^1.5.2",
+    "async": "^2.1.4",
     "check-types": "^7.0.0",
     "mmmagic": "^0.4.4"
   },
   "devDependencies": {
     "coveralls": "^2.8",
     "istanbul": "^0.4.3",
-    "mocha": "^2.1",
-    "mongoose": "3.8.40",
+    "mocha": "^3.2.0",
+    "mockgoose": "^6.0.8",
+    "mongoose": "^4.7.0",
     "pre-commit": "^1.0.6",
-    "should": "^9.0.1",
+    "should": "^11.1.1",
     "sinon": "^1.9",
-    "standard": "^7.1.2",
+    "standard": "^8.6.0",
     "tingodb": "^0.4.2",
     "tungus": "0.0.5"
   },

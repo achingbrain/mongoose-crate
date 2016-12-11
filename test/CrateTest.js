@@ -1,12 +1,12 @@
+'use strict'
+
 const should = require('should')
 const sinon = require('sinon')
 const path = require('path')
 const os = require('os')
-const fs = require('fs')
-require('tungus')
 const mongoose = require('mongoose')
+const mockgoose = require('mockgoose')
 const async = require('async')
-const randomString = require('./fixtures/randomString')
 const Crate = require('../lib/Crate')
 const createSchema = require('./fixtures/StubSchema')
 const createSchemaWithArrayProperty = require('./fixtures/StubSchemaWithArrayProperty')
@@ -18,9 +18,10 @@ const it = require('mocha').it
 
 describe('Crate', () => {
   before((done) => {
-    var dataDirectory = path.join(os.tmpdir(), randomString(10))
-    fs.mkdirSync(dataDirectory)
-    mongoose.connect('tingodb://' + dataDirectory, done)
+    mockgoose(mongoose).then(() => {
+      mongoose.Promise = Promise
+      mongoose.connect('mongodb://crate/testdb', done)
+    })
   })
 
   it('should attach a file', (done) => {
@@ -102,10 +103,38 @@ describe('Crate', () => {
     })
   })
 
+  it('should error on non attachment field and return a promise', (done) => {
+    const file = path.resolve(path.join(__dirname, '.', 'fixtures', 'node_js_logo.png'))
+
+    createSchema((StubSchema) => {
+      var model = new StubSchema()
+      model.attach('foo', {
+        path: file
+      })
+      .catch(error => {
+        error.should.be.ok
+
+        done()
+      })
+    })
+  })
+
   it('should error when attachment path is missing', (done) => {
     createSchema((StubSchema) => {
       var model = new StubSchema()
       model.attach('file', {}, function (error) {
+        error.should.be.ok
+
+        done()
+      })
+    })
+  })
+
+  it('should error when attachment path is missing and return a promise', (done) => {
+    createSchema((StubSchema) => {
+      var model = new StubSchema()
+      model.attach('file', {})
+      .catch(error => {
         error.should.be.ok
 
         done()
@@ -121,6 +150,22 @@ describe('Crate', () => {
       model.attach('file', {
         path: file
       }, (error) => {
+        error.should.be.ok
+
+        done()
+      })
+    })
+  })
+
+  it('should error on non-existent file and return a promise', (done) => {
+    const file = path.resolve(path.join(__dirname, '.', 'fixtures', 'foo.png'))
+
+    createSchema((StubSchema) => {
+      var model = new StubSchema()
+      model.attach('file', {
+        path: file
+      })
+      .catch(error => {
         error.should.be.ok
 
         done()
@@ -200,13 +245,39 @@ describe('Crate', () => {
 
         model.attach('files', {
           path: file
-        }, (error) => {
+        }, error => {
           should(error).not.ok
-
           storage.remove.callCount.should.equal(0)
 
-          model.remove()
+          model.remove(error => {
+            should(error).not.ok
+            storage.remove.callCount.should.equal(2)
 
+            done()
+          })
+        })
+      })
+    })
+  })
+
+  it('should remove attachment array when model is deleted and return a promise', (done) => {
+    const file = path.resolve(path.join(__dirname, '.', 'fixtures', 'node_js_logo.png'))
+
+    createSchemaWithArrayProperty((StubSchema, storage) => {
+      var model = new StubSchema()
+      model.attach('files', {
+        path: file
+      }, (error) => {
+        should(error).not.ok
+
+        model.attach('files', {
+          path: file
+        })
+        .then(() => {
+          storage.remove.callCount.should.equal(0)
+
+          return model.remove()
+        }).then(() => {
           storage.remove.callCount.should.equal(2)
 
           done()
