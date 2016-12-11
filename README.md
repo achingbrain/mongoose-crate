@@ -104,7 +104,7 @@ post.attach('attachments', {path: '/path/to/file'}, (error) => {
 ```javascript
 const post = new Post()
 post.attach('attachments', {path: '/path/to/file'})
-.then(() => post.attach('attachments', {path: '/path/to/another/file'}))
+  .then(() => post.attach('attachments', {path: '/path/to/another/file'}))
 ```
 
 ### Images
