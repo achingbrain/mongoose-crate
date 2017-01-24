@@ -9,6 +9,8 @@ const mockgoose = require('mockgoose')
 const async = require('async')
 const Crate = require('../lib/Crate')
 const createSchema = require('./fixtures/StubSchema')
+const createNestedSchema = require('./fixtures/StubNestedSchema')
+const createNestedSchemaWithArrayProperty = require('./fixtures/StubNestedSchemaWithArrayProperty')
 const createSchemaWithArrayProperty = require('./fixtures/StubSchemaWithArrayProperty')
 const createSchemaWithFileProcessor = require('./fixtures/StubSchemaWithFileProcessor')
 const createSchemaWithUnselectedName = require('./fixtures/StubSchemaWithUnselectedName')
@@ -40,6 +42,28 @@ describe('Crate', () => {
 
         // this can vary depending on file system...
         model.file.size.should.be.greaterThan(17000)
+
+        done()
+      })
+    })
+  })
+
+  it('should attach a file in nested property', (done) => {
+    const file = path.resolve(path.join(__dirname, '.', 'fixtures', 'node_js_logo.png'))
+
+    createNestedSchema((StubSchema) => {
+      var model = new StubSchema()
+      model.attach('nested.file', {
+        path: file
+      }, (error) => {
+        should(error).not.ok
+
+        model.nested.file.type.should.equal('image/png')
+        model.nested.file.name.should.equal('node_js_logo.png')
+        model.nested.file.url.should.be.ok
+
+        // this can vary depending on file system...
+        model.nested.file.size.should.be.greaterThan(17000)
 
         done()
       })
@@ -88,6 +112,25 @@ describe('Crate', () => {
     })
   })
 
+  it('should attach a file to an array in nested property', (done) => {
+    const file = path.resolve(path.join(__dirname, '.', 'fixtures', 'node_js_logo.png'))
+
+    createNestedSchemaWithArrayProperty((StubSchema) => {
+      var model = new StubSchema()
+
+      model.nested.files.length.should.equal(0)
+      model.attach('nested.files', {
+        path: file
+      }, function (error) {
+        should(error).not.ok
+
+        model.nested.files.length.should.equal(1)
+
+        done()
+      })
+    })
+  })
+
   it('should error on non attachment field', (done) => {
     const file = path.resolve(path.join(__dirname, '.', 'fixtures', 'node_js_logo.png'))
 
@@ -111,11 +154,11 @@ describe('Crate', () => {
       model.attach('foo', {
         path: file
       })
-      .catch(error => {
-        error.should.be.ok
+        .catch(error => {
+          error.should.be.ok
 
-        done()
-      })
+          done()
+        })
     })
   })
 
@@ -134,11 +177,11 @@ describe('Crate', () => {
     createSchema((StubSchema) => {
       var model = new StubSchema()
       model.attach('file', {})
-      .catch(error => {
-        error.should.be.ok
+        .catch(error => {
+          error.should.be.ok
 
-        done()
-      })
+          done()
+        })
     })
   })
 
@@ -165,11 +208,11 @@ describe('Crate', () => {
       model.attach('file', {
         path: file
       })
-      .catch(error => {
-        error.should.be.ok
+        .catch(error => {
+          error.should.be.ok
 
-        done()
-      })
+          done()
+        })
     })
   })
 
@@ -273,15 +316,16 @@ describe('Crate', () => {
         model.attach('files', {
           path: file
         })
-        .then(() => {
-          storage.remove.callCount.should.equal(0)
+          .then(() => {
+            storage.remove.callCount.should.equal(0)
 
-          return model.remove()
-        }).then(() => {
-          storage.remove.callCount.should.equal(2)
+            return model.remove()
+          }).then(
+          () => {
+            storage.remove.callCount.should.equal(2)
 
-          done()
-        })
+            done()
+          })
       })
     })
   })
